@@ -32,20 +32,20 @@ public class ThreadHorario implements Runnable {
         jMain.jLblSegundos.setText(segundo);
     }
     
-    public void horarioManual() {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("HH");
-        String hora = sdf.format(new Date());
-        jMain.jLblHora.setText(hora);
-
-        sdf = new SimpleDateFormat("mm");
-        String minuto = sdf.format(new Date());
-        jMain.jLblMinuto.setText(minuto);
-
-        sdf = new SimpleDateFormat("ss");
-        String segundo = sdf.format(new Date());
-        jMain.jLblSegundos.setText(segundo);
-    }
+//    public void horarioManual() {
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("HH");
+//        String hora = sdf.format(new Date());
+//        jMain.jLblHora.setText(hora);
+//
+//        sdf = new SimpleDateFormat("mm");
+//        String minuto = sdf.format(new Date());
+//        jMain.jLblMinuto.setText(minuto);
+//
+//        sdf = new SimpleDateFormat("ss");
+//        String segundo = sdf.format(new Date());
+//        jMain.jLblSegundos.setText(segundo);
+//    }
     
 
     @Override
