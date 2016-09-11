@@ -33,7 +33,7 @@ public class jMain extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTblMusicas = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         jPnlHoras = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -43,7 +43,7 @@ public class jMain extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTblMusicas.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -51,7 +51,7 @@ public class jMain extends javax.swing.JFrame {
                 "Título"
             }
         ));
-        jScrollPane1.setViewportView(jTblMusicas);
+        jScrollPane1.setViewportView(jTable1);
 
         jPnlHoras.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -171,6 +171,6 @@ public class jMain extends javax.swing.JFrame {
     public static javax.swing.JLabel jLblSegundos;
     public javax.swing.JPanel jPnlHoras;
     private javax.swing.JScrollPane jScrollPane1;
-    public static javax.swing.JTable jTblMusicas;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
