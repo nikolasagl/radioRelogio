@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import model.Musica;
 import radiorelogio.view.jMain;
 
@@ -42,7 +41,7 @@ public class MusicasControl {
                 musica.setTempoMusica("0min");
                 
                 listaMusicas.add(musica);
-//                ((DefaultTableModel) jMain.jTblMusicas.getModel()).addRow(musica);
+                //jMain.jTblMusicas.addRow(musica);
             }
             
             
