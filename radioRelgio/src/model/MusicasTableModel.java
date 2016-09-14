@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
 public class MusicasTableModel extends AbstractTableModel{
 
     private ArrayList<Musica> listagem;
-    private String[] colunas = {"Nome", "Tempo"};
+    private String[] colunas = {"Nome", "Endereço", "Tempo"};
     
     public MusicasTableModel(){
         listagem = new ArrayList<>();

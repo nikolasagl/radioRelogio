@@ -5,7 +5,11 @@
  */
 package radiorelogio.view;
 
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Musica;
 import model.MusicasTableModel;
+import radiorelogio.control.MusicasControl;
 import radiorelogio.control.ThreadHorario;
 
 /**
@@ -17,16 +21,31 @@ public class jMain extends javax.swing.JFrame {
     /**
      * Creates new form jMain
      */
-    
-    MusicasTableModel modelo = new MusicasTableModel();
-    
+//    public static MusicasTableModel modelo = new MusicasTableModel();
+    public static DefaultTableModel modelo = new DefaultTableModel();
+    private MusicasControl musicas;
+
     public jMain() {
         initComponents();
+        setLocationRelativeTo(this);
+        init();
+    }
+
+    private void init() {
+        // Iniciando o relógio
         ThreadHorario teste = new ThreadHorario();
         Thread tst = new Thread(teste);
         tst.start();
-        
-        
+
+        // Definindo o modelo da tabela
+        jTblMusicas.setModel(modelo);
+        modelo.addColumn("Título");
+        modelo.addColumn("Tempo");
+        jTblMusicas.getColumnModel().getColumn(0).setPreferredWidth(250);
+        jTblMusicas.getColumnModel().getColumn(1).setPreferredWidth(15);
+
+        //Criando o objeto que irá controlar as musicas
+        musicas = new MusicasControl();
     }
 
     /**
@@ -46,8 +65,20 @@ public class jMain extends javax.swing.JFrame {
         jLblMinuto = new javax.swing.JLabel();
         jLblHora = new javax.swing.JLabel();
         jLblSegundos = new javax.swing.JLabel();
+        jBtnAbrir = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jBtnRemover = new javax.swing.JButton();
+        jBtnLimpar = new javax.swing.JButton();
+        jBtnPlay = new javax.swing.JButton();
+        jBtnPause = new javax.swing.JButton();
+        jBtnAvancar = new javax.swing.JButton();
+        jBtnVoltar = new javax.swing.JButton();
+        jBtnParar = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jTxtOuvindo = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jTblMusicas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -106,31 +137,174 @@ public class jMain extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jBtnAbrir.setText("Abrir musicas...");
+        jBtnAbrir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jBtnAbrirMouseClicked(evt);
+            }
+        });
+
+        jLabel3.setText("Hora certa:");
+
+        jBtnRemover.setText("Remover musicas...");
+        jBtnRemover.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jBtnRemoverMouseClicked(evt);
+            }
+        });
+
+        jBtnLimpar.setText("Limpar Playlist");
+        jBtnLimpar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jBtnLimparMouseClicked(evt);
+            }
+        });
+
+        jBtnPlay.setText("PLAY");
+        jBtnPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnPlayActionPerformed(evt);
+            }
+        });
+
+        jBtnPause.setText("PAUSE");
+
+        jBtnAvancar.setText("AVANÇAR");
+
+        jBtnVoltar.setText("VOLTAR");
+
+        jBtnParar.setText("PARAR");
+        jBtnParar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnPararActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("Ouvindo:");
+
+        jTxtOuvindo.setEditable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(189, Short.MAX_VALUE)
-                .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(190, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 528, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(97, 97, 97))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jBtnAbrir)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jBtnRemover)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jBtnLimpar))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel3)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(171, 171, 171))))))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jBtnVoltar)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnPause)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnPlay)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnParar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnAvancar)
+                        .addGap(109, 109, 109))))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jBtnAvancar, jBtnParar, jBtnPause, jBtnPlay, jBtnVoltar});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(68, 68, 68)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(131, 131, 131)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addGap(64, 64, 64)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnAvancar)
+                    .addComponent(jBtnVoltar)
+                    .addComponent(jBtnParar)
+                    .addComponent(jBtnPause)
+                    .addComponent(jBtnPlay))
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnAbrir)
+                    .addComponent(jBtnRemover)
+                    .addComponent(jBtnLimpar))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jBtnAbrirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnAbrirMouseClicked
+        musicas.OpenFile();
+    }//GEN-LAST:event_jBtnAbrirMouseClicked
+
+    private void jBtnLimparMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnLimparMouseClicked
+        modelo.setNumRows(0);
+        musicas.limparLista();
+    }//GEN-LAST:event_jBtnLimparMouseClicked
+
+    private void jBtnRemoverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnRemoverMouseClicked
+        int[] linhaSelecionada = jTblMusicas.getSelectedRows();
+
+        if (linhaSelecionada.length > 0) {
+            for (int i = (linhaSelecionada.length - 1); i >= 0; i--) {
+                jMain.modelo.removeRow(linhaSelecionada[i]);
+                musicas.removerMusica(i);
+            }
+        }
+
+    }//GEN-LAST:event_jBtnRemoverMouseClicked
+
+    private void jBtnPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPararActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jBtnPararActionPerformed
+
+    private void jBtnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPlayActionPerformed
+
+        int index = jTblMusicas.getSelectedRow();
+
+        if(modelo.getRowCount() > 0){
+            if (index > -1) {
+                Musica musicaOuvindo = musicas.getMusica(index);
+                jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
+            }else{
+                Musica musicaOuvindo = musicas.getMusica(0);
+                jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
+            }
+        }else{
+           JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
+        }
+
+    }//GEN-LAST:event_jBtnPlayActionPerformed
 
     /**
      * @param args the command line arguments
@@ -165,18 +339,28 @@ public class jMain extends javax.swing.JFrame {
                 new jMain().setVisible(true);
             }
         });
-        
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtnAbrir;
+    private javax.swing.JButton jBtnAvancar;
+    private javax.swing.JButton jBtnLimpar;
+    private javax.swing.JButton jBtnParar;
+    private javax.swing.JButton jBtnPause;
+    private javax.swing.JButton jBtnPlay;
+    private javax.swing.JButton jBtnRemover;
+    private javax.swing.JButton jBtnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     public static javax.swing.JLabel jLblHora;
     public static javax.swing.JLabel jLblMinuto;
     public static javax.swing.JLabel jLblSegundos;
     public javax.swing.JPanel jPnlHoras;
     private javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JTable jTblMusicas;
+    private javax.swing.JTextField jTxtOuvindo;
     // End of variables declaration//GEN-END:variables
 }

@@ -17,38 +17,46 @@ import radiorelogio.view.jMain;
  * @author a1502727
  */
 public class MusicasControl {
-    
+
     private ArrayList<Musica> listaMusicas;
-    
-    public MusicasControl(){
+
+    public MusicasControl() {
         listaMusicas = new ArrayList<>();
     }
-    
-    private void OpenFile() {
+
+    public void OpenFile() {
         JFileChooser fileWindow = new javax.swing.JFileChooser();
-        fileWindow.setFileFilter(new FileNameExtensionFilter("Text File", "txt"));
+        fileWindow.setFileFilter(new FileNameExtensionFilter("Arquivos MP3", "mp3"));
+        fileWindow.setMultiSelectionEnabled(true);
 
         int returnFileVal = fileWindow.showOpenDialog(fileWindow);
 
         if (returnFileVal == JFileChooser.APPROVE_OPTION) {
-            
+
             File[] files = fileWindow.getSelectedFiles();
-            
-            for(int i = 0; i<files.length;i++){
+
+            for (int i = 0; i < files.length; i++) {
                 Musica musica = new Musica();
                 musica.setEnderecoMusica(files[i].getAbsolutePath());
                 musica.setNomeMusica(files[i].getName());
                 musica.setTempoMusica("0min");
-                
-                listaMusicas.add(musica);
-                //jMain.jTblMusicas.addRow(musica);
-            }
-            
-            
-            
-        }
 
+                listaMusicas.add(musica);
+                jMain.modelo.addRow(new Object[]{listaMusicas.get(i).getNomeMusica(), listaMusicas.get(i).getTempoMusica()});;
+            }
+        }
+    }
+
+    public Musica getMusica(int i) {
+        return listaMusicas.get(i);
     }
     
     
+    public void removerMusica(int i){
+        listaMusicas.remove(i);
+    }
+    
+    public void limparLista(){
+        listaMusicas = null;
+    }
 }
