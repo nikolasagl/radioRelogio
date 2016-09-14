@@ -51,12 +51,15 @@ public class MusicasControl {
         return listaMusicas.get(i);
     }
     
-    
     public void removerMusica(int i){
         listaMusicas.remove(i);
     }
     
     public void limparLista(){
         listaMusicas = null;
+    }
+    
+    public void play(int i){
+        
     }
 }

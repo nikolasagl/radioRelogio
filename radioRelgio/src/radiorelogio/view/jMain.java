@@ -5,8 +5,16 @@
  */
 package radiorelogio.view;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import model.Musica;
 import model.MusicasTableModel;
 import radiorelogio.control.MusicasControl;
@@ -33,8 +41,8 @@ public class jMain extends javax.swing.JFrame {
 
     private void init() {
         // Iniciando o relógio
-        ThreadHorario teste = new ThreadHorario();
-        Thread tst = new Thread(teste);
+        ThreadHorario relogio = new ThreadHorario();
+        Thread tst = new Thread(relogio);
         tst.start();
 
         // Definindo o modelo da tabela
@@ -291,15 +299,18 @@ public class jMain extends javax.swing.JFrame {
     private void jBtnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPlayActionPerformed
 
         int index = jTblMusicas.getSelectedRow();
+        Musica musicaOuvindo;
 
         if(modelo.getRowCount() > 0){
             if (index > -1) {
-                Musica musicaOuvindo = musicas.getMusica(index);
+                musicaOuvindo = musicas.getMusica(index);
                 jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
             }else{
-                Musica musicaOuvindo = musicas.getMusica(0);
+                musicaOuvindo = musicas.getMusica(0);
                 jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
             }
+            
+            
         }else{
            JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
         }
