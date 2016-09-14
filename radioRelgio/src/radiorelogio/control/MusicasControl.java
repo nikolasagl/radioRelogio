@@ -7,6 +7,8 @@ package radiorelogio.control;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import model.Musica;
@@ -19,6 +21,8 @@ import radiorelogio.view.jMain;
 public class MusicasControl {
 
     private ArrayList<Musica> listaMusicas;
+    private ThreadMusicas player = new ThreadMusicas();
+    private Thread threadMusica;
 
     public MusicasControl() {
         listaMusicas = new ArrayList<>();
@@ -42,7 +46,7 @@ public class MusicasControl {
                 musica.setTempoMusica("0min");
 
                 listaMusicas.add(musica);
-                jMain.modelo.addRow(new Object[]{listaMusicas.get(i).getNomeMusica(), listaMusicas.get(i).getTempoMusica()});;
+                jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});;
             }
         }
     }
@@ -60,6 +64,15 @@ public class MusicasControl {
     }
     
     public void play(int i){
-        
+        threadMusica = new Thread(player);
+        threadMusica.start();
+    }
+    
+    public void stop(){
+        threadMusica.stop();
+    }
+    
+    public void pause(){
+       
     }
 }

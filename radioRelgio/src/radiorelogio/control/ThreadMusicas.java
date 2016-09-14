@@ -20,22 +20,38 @@ import radiorelogio.view.jMain;
  */
 public class ThreadMusicas implements Runnable {
 
+    private Player player;
+    
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        play(0);
     }
 
     public void play(int i) {
 
-        Musica m = new Musica();
-        
-        try {
-            FileInputStream stream = new FileInputStream(new File(m.getEnderecoMusica()));
-            BufferedInputStream buffer = new BufferedInputStream(stream);
-            Player player = new Player(buffer);
-            player.play();
-        } catch (Exception ex) {
-            Logger.getLogger(jMain.class.getName()).log(Level.SEVERE, null, ex);
+        if (i < jMain.modelo.getRowCount()) {
+            
+            Musica m = jMain.musicas.getMusica(i);
+            
+            try {
+                FileInputStream stream = new FileInputStream(new File(m.getEnderecoMusica()));
+                BufferedInputStream buffer = new BufferedInputStream(stream);
+                player = new Player(buffer);
+                player.play();
+            } catch (Exception ex) {
+                Logger.getLogger(jMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            play(i++);
         }
+
+    }
+    
+    public void stop(){
+        player.close();
+    }
+    
+    public void pausar(){
+        
     }
 }

@@ -19,6 +19,7 @@ import model.Musica;
 import model.MusicasTableModel;
 import radiorelogio.control.MusicasControl;
 import radiorelogio.control.ThreadHorario;
+import radiorelogio.control.ThreadMusicas;
 
 /**
  *
@@ -31,7 +32,7 @@ public class jMain extends javax.swing.JFrame {
      */
 //    public static MusicasTableModel modelo = new MusicasTableModel();
     public static DefaultTableModel modelo = new DefaultTableModel();
-    private MusicasControl musicas;
+    public static MusicasControl musicas;
 
     public jMain() {
         initComponents();
@@ -293,7 +294,7 @@ public class jMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jBtnRemoverMouseClicked
 
     private void jBtnPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPararActionPerformed
-        // TODO add your handling code here:
+        musicas.stop();
     }//GEN-LAST:event_jBtnPararActionPerformed
 
     private void jBtnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPlayActionPerformed
@@ -301,18 +302,19 @@ public class jMain extends javax.swing.JFrame {
         int index = jTblMusicas.getSelectedRow();
         Musica musicaOuvindo;
 
-        if(modelo.getRowCount() > 0){
+        if (modelo.getRowCount() > 0) {
             if (index > -1) {
                 musicaOuvindo = musicas.getMusica(index);
                 jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
-            }else{
+            } else {
                 musicaOuvindo = musicas.getMusica(0);
                 jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
             }
+
+            musicas.play(index);
             
-            
-        }else{
-           JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
+        } else {
+            JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
         }
 
     }//GEN-LAST:event_jBtnPlayActionPerformed
