@@ -5,7 +5,11 @@
  */
 package radiorelogio.control;
 
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.UnsupportedTagException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +32,7 @@ public class MusicasControl {
         listaMusicas = new ArrayList<>();
     }
 
-    public void OpenFile() {
+    public void OpenFile() throws IOException {
         JFileChooser fileWindow = new javax.swing.JFileChooser();
         fileWindow.setFileFilter(new FileNameExtensionFilter("Arquivos MP3", "mp3"));
         fileWindow.setMultiSelectionEnabled(true);
@@ -41,12 +45,22 @@ public class MusicasControl {
 
             for (int i = 0; i < files.length; i++) {
                 Musica musica = new Musica();
-                musica.setEnderecoMusica(files[i].getAbsolutePath());
-                musica.setNomeMusica(files[i].getName());
-                musica.setTempoMusica("0min");
+                try {
+                    Mp3File mp3file = new Mp3File(files[i].getAbsolutePath());
+                    Float tempo = (float)mp3file.getLengthInSeconds() / 60;
+                    musica.setEnderecoMusica(files[i].getAbsolutePath());
+                    musica.setNomeMusica(files[i].getName());
+                    musica.setTempoMusica(tempo.toString());
 
-                listaMusicas.add(musica);
-                jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});;
+                    listaMusicas.add(musica);
+                    jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});;
+                    
+                } catch (UnsupportedTagException ex) {
+                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvalidDataException ex) {
+                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
             }
         }
     }
@@ -54,25 +68,25 @@ public class MusicasControl {
     public Musica getMusica(int i) {
         return listaMusicas.get(i);
     }
-    
-    public void removerMusica(int i){
+
+    public void removerMusica(int i) {
         listaMusicas.remove(i);
     }
-    
-    public void limparLista(){
+
+    public void limparLista() {
         listaMusicas = null;
     }
-    
-    public void play(int i){
+
+    public void play(int i) {
         threadMusica = new Thread(player);
         threadMusica.start();
     }
-    
-    public void stop(){
+
+    public void stop() {
         threadMusica.stop();
     }
-    
-    public void pause(){
-       
+
+    public void pause() {
+
     }
 }

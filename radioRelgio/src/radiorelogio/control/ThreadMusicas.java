@@ -46,12 +46,4 @@ public class ThreadMusicas implements Runnable {
         }
 
     }
-    
-    public void stop(){
-        player.close();
-    }
-    
-    public void pausar(){
-        
-    }
 }
