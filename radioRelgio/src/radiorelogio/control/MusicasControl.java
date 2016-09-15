@@ -8,15 +8,21 @@ package radiorelogio.control;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javazoom.jl.player.Player;
 import model.Musica;
 import radiorelogio.view.jMain;
+import static radiorelogio.view.jMain.modelo;
+import static radiorelogio.view.jMain.musicas;
 
 /**
  *
@@ -25,11 +31,13 @@ import radiorelogio.view.jMain;
 public class MusicasControl {
 
     private ArrayList<Musica> listaMusicas;
-    private ThreadMusicas player = new ThreadMusicas();
     private Thread threadMusica;
+    private Player player;
+    private int index;
 
     public MusicasControl() {
         listaMusicas = new ArrayList<>();
+        index = -1;
     }
 
     public void OpenFile() throws IOException {
@@ -47,14 +55,14 @@ public class MusicasControl {
                 Musica musica = new Musica();
                 try {
                     Mp3File mp3file = new Mp3File(files[i].getAbsolutePath());
-                    Float tempo = (float)mp3file.getLengthInSeconds() / 60;
+                    Float tempo = (float) mp3file.getLengthInSeconds() / 60;
                     musica.setEnderecoMusica(files[i].getAbsolutePath());
                     musica.setNomeMusica(files[i].getName());
                     musica.setTempoMusica(tempo.toString());
 
                     listaMusicas.add(musica);
                     jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});;
-                    
+
                 } catch (UnsupportedTagException ex) {
                     Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InvalidDataException ex) {
@@ -69,24 +77,78 @@ public class MusicasControl {
         return listaMusicas.get(i);
     }
 
+    public void play(int i) {
+
+        if (i == -1) {
+            i = 0;
+        }
+
+        if (index != i) {
+            index = i;
+            if (modelo.getRowCount() > 0) {
+                inicarThread();
+            } else {
+                JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
+            }
+        }
+    }
+
+    private void tocar() {
+        if (index < jMain.modelo.getRowCount()) {
+
+            Musica m = jMain.musicas.getMusica(index);
+
+            if (index > -1) {
+                jMain.jTxtOuvindo.setText(musicas.getMusica(index).getNomeMusica());
+            } else {
+                jMain.jTxtOuvindo.setText(musicas.getMusica(index).getNomeMusica());
+            }
+
+            try {
+                FileInputStream stream = new FileInputStream(new File(m.getEnderecoMusica()));
+                BufferedInputStream buffer = new BufferedInputStream(stream);
+                player = new Player(buffer);
+                player.play();
+            } catch (Exception ex) {
+                Logger.getLogger(jMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            index++;
+            tocar();
+        }else{
+            index = 0;
+            tocar();
+        }
+    }
+
+    private void inicarThread() {
+        threadMusica = new Thread(new Runnable() {
+            public void run() {
+                tocar();
+            }
+        });
+
+        threadMusica.start();
+    }
+
+    public void stop() {
+        this.threadMusica.stop();
+        index = -1;
+    }
+
     public void removerMusica(int i) {
         listaMusicas.remove(i);
+        if(i == index){
+            this.stop();
+            this.play(i++);
+        }
     }
 
     public void limparLista() {
         listaMusicas = null;
     }
 
-    public void play(int i) {
-        threadMusica = new Thread(player);
-        threadMusica.start();
-    }
-
-    public void stop() {
-        threadMusica.stop();
-    }
-
-    public void pause() {
-
+    public void pause() throws InterruptedException {
+        this.threadMusica.wait();
     }
 }

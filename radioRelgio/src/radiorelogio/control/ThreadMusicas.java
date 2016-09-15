@@ -22,13 +22,16 @@ public class ThreadMusicas implements Runnable {
 
     private Player player;
     
+    
     @Override
     public void run() {
-        play(0);
+        if(jMain.tocar){
+            play(0);
+        }
+        
     }
 
     public void play(int i) {
-
         if (i < jMain.modelo.getRowCount()) {
             
             Musica m = jMain.musicas.getMusica(i);
@@ -44,6 +47,5 @@ public class ThreadMusicas implements Runnable {
             
             play(i++);
         }
-
     }
 }

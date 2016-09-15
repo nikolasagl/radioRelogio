@@ -5,21 +5,12 @@
  */
 package radiorelogio.view;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
-import model.Musica;
-import model.MusicasTableModel;
 import radiorelogio.control.MusicasControl;
 import radiorelogio.control.ThreadHorario;
-import radiorelogio.control.ThreadMusicas;
 
 /**
  *
@@ -33,6 +24,9 @@ public class jMain extends javax.swing.JFrame {
 //    public static MusicasTableModel modelo = new MusicasTableModel();
     public static DefaultTableModel modelo = new DefaultTableModel();
     public static MusicasControl musicas;
+    public static boolean tocar;
+    //private ThreadMusicas player = new ThreadMusicas();
+    private Thread threadMusica;
 
     public jMain() {
         initComponents();
@@ -55,6 +49,13 @@ public class jMain extends javax.swing.JFrame {
 
         //Criando o objeto que irá controlar as musicas
         musicas = new MusicasControl();
+
+        //Definindo a flag de controle de tocar a playlist
+        tocar = false;
+
+        //Iniciando a Thread responsaver em tocar as múscias
+        //this.threadMusica = new Thread(player);
+        //this.threadMusica.start();
     }
 
     /**
@@ -79,11 +80,7 @@ public class jMain extends javax.swing.JFrame {
         jBtnRemover = new javax.swing.JButton();
         jBtnLimpar = new javax.swing.JButton();
         jBtnPlay = new javax.swing.JButton();
-        jBtnPause = new javax.swing.JButton();
-        jBtnAvancar = new javax.swing.JButton();
-        jBtnVoltar = new javax.swing.JButton();
         jBtnParar = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         jTxtOuvindo = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -176,21 +173,12 @@ public class jMain extends javax.swing.JFrame {
             }
         });
 
-        jBtnPause.setText("PAUSE");
-
-        jBtnAvancar.setText("AVANÇAR");
-
-        jBtnVoltar.setText("VOLTAR");
-
         jBtnParar.setText("PARAR");
         jBtnParar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBtnPararActionPerformed(evt);
             }
         });
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel4.setText("Ouvindo:");
 
         jTxtOuvindo.setEditable(false);
 
@@ -201,79 +189,62 @@ public class jMain extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jBtnAbrir)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jBtnRemover)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jBtnLimpar))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel3)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                            .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(171, 171, 171))))))
-                        .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addComponent(jBtnPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnParar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jBtnVoltar)
-                                .addGap(18, 18, 18)
-                                .addComponent(jBtnPause)
-                                .addGap(18, 18, 18)
-                                .addComponent(jBtnPlay)
-                                .addGap(18, 18, 18)
-                                .addComponent(jBtnParar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jBtnAbrir)
                         .addGap(18, 18, 18)
-                        .addComponent(jBtnAvancar)
-                        .addGap(109, 109, 109))))
+                        .addComponent(jBtnRemover)
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnLimpar)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jPnlHoras, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(183, 183, 183))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jBtnAvancar, jBtnParar, jBtnPause, jBtnPlay, jBtnVoltar});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jBtnParar, jBtnPlay});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(64, 64, 64)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBtnAvancar)
-                    .addComponent(jBtnVoltar)
-                    .addComponent(jBtnParar)
-                    .addComponent(jBtnPause)
-                    .addComponent(jBtnPlay))
-                .addGap(24, 24, 24)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jBtnParar)
+                    .addComponent(jBtnPlay))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBtnAbrir)
                     .addComponent(jBtnRemover)
                     .addComponent(jBtnLimpar))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBtnAbrirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnAbrirMouseClicked
-        musicas.OpenFile();
+        try {
+            musicas.OpenFile();
+        } catch (IOException ex) {
+            Logger.getLogger(jMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jBtnAbrirMouseClicked
 
     private void jBtnLimparMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnLimparMouseClicked
@@ -290,33 +261,18 @@ public class jMain extends javax.swing.JFrame {
                 musicas.removerMusica(i);
             }
         }
-
     }//GEN-LAST:event_jBtnRemoverMouseClicked
 
     private void jBtnPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPararActionPerformed
+        tocar = false;
+        
         musicas.stop();
     }//GEN-LAST:event_jBtnPararActionPerformed
 
     private void jBtnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPlayActionPerformed
+        tocar = !tocar;
 
-        int index = jTblMusicas.getSelectedRow();
-        Musica musicaOuvindo;
-
-        if (modelo.getRowCount() > 0) {
-            if (index > -1) {
-                musicaOuvindo = musicas.getMusica(index);
-                jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
-            } else {
-                musicaOuvindo = musicas.getMusica(0);
-                jTxtOuvindo.setText(musicaOuvindo.getNomeMusica());
-            }
-
-            musicas.play(index);
-            
-        } else {
-            JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
-        }
-
+        musicas.play(jTblMusicas.getSelectedRow());
     }//GEN-LAST:event_jBtnPlayActionPerformed
 
     /**
@@ -357,23 +313,19 @@ public class jMain extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnAbrir;
-    private javax.swing.JButton jBtnAvancar;
     private javax.swing.JButton jBtnLimpar;
     private javax.swing.JButton jBtnParar;
-    private javax.swing.JButton jBtnPause;
     private javax.swing.JButton jBtnPlay;
     private javax.swing.JButton jBtnRemover;
-    private javax.swing.JButton jBtnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     public static javax.swing.JLabel jLblHora;
     public static javax.swing.JLabel jLblMinuto;
     public static javax.swing.JLabel jLblSegundos;
     public javax.swing.JPanel jPnlHoras;
     private javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JTable jTblMusicas;
-    private javax.swing.JTextField jTxtOuvindo;
+    public static javax.swing.JTextField jTxtOuvindo;
     // End of variables declaration//GEN-END:variables
 }
