@@ -51,24 +51,22 @@ public class MusicasControl {
 
             File[] files = fileWindow.getSelectedFiles();
 
-            for (int i = 0; i < files.length; i++) {
+            for (File file : files) {
                 Musica musica = new Musica();
                 try {
-                    Mp3File mp3file = new Mp3File(files[i].getAbsolutePath());
-                    Float tempo = (float) mp3file.getLengthInSeconds() / 60;
-                    musica.setEnderecoMusica(files[i].getAbsolutePath());
-                    musica.setNomeMusica(files[i].getName());
-                    musica.setTempoMusica(tempo.toString());
-
+                    Mp3File mp3file = new Mp3File(file.getAbsolutePath());
+                    Long segundos = mp3file.getLengthInSeconds() % 60;
+                    Long minutos =  mp3file.getLengthInSeconds() / 60;
+                    
+                    String tempo = minutos + "min"+ segundos + "s";
+                    musica.setEnderecoMusica(file.getAbsolutePath());
+                    musica.setNomeMusica(file.getName());
+                    musica.setTempoMusica(tempo);
                     listaMusicas.add(musica);
-                    jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});;
-
-                } catch (UnsupportedTagException ex) {
-                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvalidDataException ex) {
+                    jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});
+                } catch (UnsupportedTagException | InvalidDataException ex) {
                     Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
         }
     }
@@ -78,51 +76,31 @@ public class MusicasControl {
     }
 
     public void play(int i) {
+        if (!jMain.tocando) {
+            jMain.parar = false;
 
-        if (i == -1) {
-            i = 0;
-        }
-
-        if (index != i) {
-            index = i;
-            if (modelo.getRowCount() > 0) {
-                inicarThread();
-            } else {
-                JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
-            }
-        }
-    }
-
-    private void tocar() {
-        if (index < jMain.modelo.getRowCount()) {
-
-            Musica m = jMain.musicas.getMusica(index);
-
-            if (index > -1) {
-                jMain.jTxtOuvindo.setText(musicas.getMusica(index).getNomeMusica());
-            } else {
-                jMain.jTxtOuvindo.setText(musicas.getMusica(index).getNomeMusica());
+            if (i == -1) {
+                i = 0;
             }
 
-            try {
-                FileInputStream stream = new FileInputStream(new File(m.getEnderecoMusica()));
-                BufferedInputStream buffer = new BufferedInputStream(stream);
-                player = new Player(buffer);
-                player.play();
-            } catch (Exception ex) {
-                Logger.getLogger(jMain.class.getName()).log(Level.SEVERE, null, ex);
+            if (index != i) {
+                index = i;
+                if (modelo.getRowCount() > 0) {
+                    inicarThread();
+                } else {
+                    JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
+                }
             }
-
-            index++;
-            tocar();
         }else{
-            index = 0;
-            tocar();
+            jMain.tocando = false;
+            player.close();
+            play(i);
         }
     }
 
     private void inicarThread() {
         threadMusica = new Thread(new Runnable() {
+            @Override
             public void run() {
                 tocar();
             }
@@ -131,15 +109,42 @@ public class MusicasControl {
         threadMusica.start();
     }
 
-    public void stop() {
-        this.threadMusica.stop();
-        index = -1;
+    private void tocar() {
+        jMain.tocando = true;
+        if (!jMain.parar) {
+            if (index < jMain.modelo.getRowCount()) {
+                Musica m = jMain.musicas.getMusica(index);
+
+                if (index > -1) {
+                    jMain.jTxtOuvindo.setText(musicas.getMusica(index).getNomeMusica());
+                } else {
+                    jMain.jTxtOuvindo.setText(musicas.getMusica(0).getNomeMusica());
+                }
+
+                try {
+                    FileInputStream stream = new FileInputStream(new File(m.getEnderecoMusica()));
+                    BufferedInputStream buffer = new BufferedInputStream(stream);
+                    player = new Player(buffer);
+                    player.play();
+                } catch (Exception ex) {
+                }
+
+                if (!jMain.jChkRepetirUma.isSelected()) {
+                    index++;
+                }
+
+                tocar();
+            } else if (jMain.jChkRepetirTudo.isSelected()) {
+                index = 0;
+                tocar();
+            }
+        }
+        jMain.tocando = false;
     }
 
     public void removerMusica(int i) {
         listaMusicas.remove(i);
-        if(i == index){
-            this.stop();
+        if (i == index) {
             this.play(i++);
         }
     }
@@ -148,7 +153,12 @@ public class MusicasControl {
         listaMusicas = null;
     }
 
-    public void pause() throws InterruptedException {
-        this.threadMusica.wait();
+    public void stop() {
+        if (jMain.tocando) {
+            player.close();
+            jMain.parar = true;
+            jMain.tocando = false;
+        }
     }
+
 }

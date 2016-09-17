@@ -24,9 +24,7 @@ public class jMain extends javax.swing.JFrame {
 //    public static MusicasTableModel modelo = new MusicasTableModel();
     public static DefaultTableModel modelo = new DefaultTableModel();
     public static MusicasControl musicas;
-    public static boolean tocar;
-    //private ThreadMusicas player = new ThreadMusicas();
-    private Thread threadMusica;
+    public static boolean tocando, parar;
 
     public jMain() {
         initComponents();
@@ -47,15 +45,12 @@ public class jMain extends javax.swing.JFrame {
         jTblMusicas.getColumnModel().getColumn(0).setPreferredWidth(250);
         jTblMusicas.getColumnModel().getColumn(1).setPreferredWidth(15);
 
-        //Criando o objeto que irá controlar as musicas
+        // Criando o objeto que irá controlar as musicas
         musicas = new MusicasControl();
 
-        //Definindo a flag de controle de tocar a playlist
-        tocar = false;
-
-        //Iniciando a Thread responsaver em tocar as múscias
-        //this.threadMusica = new Thread(player);
-        //this.threadMusica.start();
+        // Definindo a flag de controle de tocando a playlist
+        tocando = false;
+        parar = false;
     }
 
     /**
@@ -82,6 +77,8 @@ public class jMain extends javax.swing.JFrame {
         jBtnPlay = new javax.swing.JButton();
         jBtnParar = new javax.swing.JButton();
         jTxtOuvindo = new javax.swing.JTextField();
+        jChkRepetirTudo = new javax.swing.JCheckBox();
+        jChkRepetirUma = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -182,6 +179,20 @@ public class jMain extends javax.swing.JFrame {
 
         jTxtOuvindo.setEditable(false);
 
+        jChkRepetirTudo.setText("Repetir tudo");
+        jChkRepetirTudo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jChkRepetirTudoActionPerformed(evt);
+            }
+        });
+
+        jChkRepetirUma.setText("Repetir uma");
+        jChkRepetirUma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jChkRepetirUmaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -189,27 +200,32 @@ public class jMain extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                        .addComponent(jBtnPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jBtnParar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jBtnAbrir)
-                        .addGap(18, 18, 18)
-                        .addComponent(jBtnRemover)
-                        .addGap(18, 18, 18)
-                        .addComponent(jBtnLimpar)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jPnlHoras, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(183, 183, 183))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jPnlHoras, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(183, 183, 183))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                                .addComponent(jBtnPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnParar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jChkRepetirTudo)
+                                .addGap(18, 18, 18)
+                                .addComponent(jChkRepetirUma)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jBtnAbrir)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnRemover)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnLimpar)))
+                        .addContainerGap())))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jBtnParar, jBtnPlay});
@@ -221,7 +237,7 @@ public class jMain extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTxtOuvindo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBtnParar)
@@ -232,7 +248,9 @@ public class jMain extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBtnAbrir)
                     .addComponent(jBtnRemover)
-                    .addComponent(jBtnLimpar))
+                    .addComponent(jBtnLimpar)
+                    .addComponent(jChkRepetirTudo)
+                    .addComponent(jChkRepetirUma))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -258,22 +276,28 @@ public class jMain extends javax.swing.JFrame {
         if (linhaSelecionada.length > 0) {
             for (int i = (linhaSelecionada.length - 1); i >= 0; i--) {
                 jMain.modelo.removeRow(linhaSelecionada[i]);
-                musicas.removerMusica(i);
+                musicas.removerMusica(linhaSelecionada[i]);
             }
         }
     }//GEN-LAST:event_jBtnRemoverMouseClicked
 
     private void jBtnPararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPararActionPerformed
-        tocar = false;
-        
         musicas.stop();
     }//GEN-LAST:event_jBtnPararActionPerformed
 
     private void jBtnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPlayActionPerformed
-        tocar = !tocar;
-
         musicas.play(jTblMusicas.getSelectedRow());
     }//GEN-LAST:event_jBtnPlayActionPerformed
+
+    private void jChkRepetirTudoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChkRepetirTudoActionPerformed
+        if(jChkRepetirUma.isSelected())
+            jChkRepetirUma.setSelected(false);
+    }//GEN-LAST:event_jChkRepetirTudoActionPerformed
+
+    private void jChkRepetirUmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jChkRepetirUmaActionPerformed
+        if(jChkRepetirTudo.isSelected())
+            jChkRepetirTudo.setSelected(false);
+    }//GEN-LAST:event_jChkRepetirUmaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -317,6 +341,8 @@ public class jMain extends javax.swing.JFrame {
     private javax.swing.JButton jBtnParar;
     private javax.swing.JButton jBtnPlay;
     private javax.swing.JButton jBtnRemover;
+    public static javax.swing.JCheckBox jChkRepetirTudo;
+    public static javax.swing.JCheckBox jChkRepetirUma;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
