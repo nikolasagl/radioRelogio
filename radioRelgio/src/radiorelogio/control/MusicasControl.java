@@ -19,7 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javazoom.jl.player.Player;
-import model.Musica;
+import radiorelogio.model.Musica;
 import radiorelogio.view.jMain;
 import static radiorelogio.view.jMain.modelo;
 import static radiorelogio.view.jMain.musicas;
@@ -84,8 +84,8 @@ public class MusicasControl {
             }
 
             if (index != i) {
-                index = i;
                 if (modelo.getRowCount() > 0) {
+                    index = i;
                     inicarThread();
                 } else {
                     JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
@@ -145,6 +145,7 @@ public class MusicasControl {
     public void removerMusica(int i) {
         listaMusicas.remove(i);
         if (i == index) {
+            jMain.jTxtOuvindo.setText("");
             this.play(i++);
         }
     }
