@@ -56,9 +56,9 @@ public class MusicasControl {
                 try {
                     Mp3File mp3file = new Mp3File(file.getAbsolutePath());
                     Long segundos = mp3file.getLengthInSeconds() % 60;
-                    Long minutos =  mp3file.getLengthInSeconds() / 60;
-                    
-                    String tempo = minutos + "min"+ segundos + "s";
+                    Long minutos = mp3file.getLengthInSeconds() / 60;
+
+                    String tempo = minutos + "min" + segundos + "s";
                     musica.setEnderecoMusica(file.getAbsolutePath());
                     musica.setNomeMusica(file.getName());
                     musica.setTempoMusica(tempo);
@@ -89,10 +89,11 @@ public class MusicasControl {
                     inicarThread();
                 } else {
                     JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
+                    jMain.parar = true;
+                    jMain.tocando = false;
                 }
             }
-        }else{
-            jMain.tocando = false;
+        } else {
             player.close();
             play(i);
         }
@@ -134,6 +135,7 @@ public class MusicasControl {
                 }
 
                 tocar();
+
             } else if (jMain.jChkRepetirTudo.isSelected()) {
                 index = 0;
                 tocar();
@@ -156,10 +158,15 @@ public class MusicasControl {
 
     public void stop() {
         if (jMain.tocando) {
-            player.close();
+            jMain.jTxtOuvindo.setText("");
             jMain.parar = true;
             jMain.tocando = false;
+            player.close();
         }
+    }
+
+    public void horaCerta() {
+        
     }
 
 }
