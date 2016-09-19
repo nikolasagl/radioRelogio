@@ -65,7 +65,7 @@ public class MusicasControl {
                     listaMusicas.add(musica);
                     jMain.modelo.addRow(new Object[]{musica.getNomeMusica(), musica.getTempoMusica()});
                 } catch (UnsupportedTagException | InvalidDataException ex) {
-                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
+//                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -86,7 +86,7 @@ public class MusicasControl {
             if (index != i) {
                 if (modelo.getRowCount() > 0) {
                     index = i;
-                    inicarThread();
+                    inicarThreadTocar();
                 } else {
                     JOptionPane.showMessageDialog(null, "A lista de música esta vazia. Inclua pelo menos uma música");
                     jMain.parar = true;
@@ -99,7 +99,7 @@ public class MusicasControl {
         }
     }
 
-    private void inicarThread() {
+    private void inicarThreadTocar() {
         threadMusica = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,6 +111,11 @@ public class MusicasControl {
     }
 
     private void tocar() {
+        if (jMain.falarHora) {
+            HoraControl hora = new HoraControl();
+            hora.iniciarThreadHoraAtual();
+        }
+
         jMain.tocando = true;
         if (!jMain.parar) {
             if (index < jMain.modelo.getRowCount()) {
@@ -133,11 +138,20 @@ public class MusicasControl {
                 if (!jMain.jChkRepetirUma.isSelected()) {
                     index++;
                 }
-
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+//                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 tocar();
 
             } else if (jMain.jChkRepetirTudo.isSelected()) {
                 index = 0;
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+//                    Logger.getLogger(MusicasControl.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 tocar();
             }
         }
@@ -163,10 +177,6 @@ public class MusicasControl {
             jMain.tocando = false;
             player.close();
         }
-    }
-
-    public void horaCerta() {
-        
     }
 
 }

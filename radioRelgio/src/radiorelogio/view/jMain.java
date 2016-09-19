@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
+import radiorelogio.control.HoraControl;
 import radiorelogio.control.MusicasControl;
 import radiorelogio.control.ThreadHorario;
 
@@ -24,7 +25,8 @@ public class jMain extends javax.swing.JFrame {
 //    public static MusicasTableModel modelo = new MusicasTableModel();
     public static DefaultTableModel modelo = new DefaultTableModel();
     public static MusicasControl musicas;
-    public static boolean tocando, parar;
+    public static HoraControl hora;
+    public static boolean tocando, parar, falarHora;
 
     public jMain() {
         initComponents();
@@ -47,10 +49,16 @@ public class jMain extends javax.swing.JFrame {
 
         // Criando o objeto que irá controlar as musicas
         musicas = new MusicasControl();
+        
+        //Craindo o objeto que irá controlar as horas
+        hora = new HoraControl();
 
         // Definindo a flag de controle de tocando a playlist
         tocando = false;
         parar = false;
+        
+        // Definindo a flag para falar a hora cheia
+        falarHora = false;
     }
 
     /**
@@ -72,7 +80,6 @@ public class jMain extends javax.swing.JFrame {
         jLblHora = new javax.swing.JLabel();
         jLblSegundos = new javax.swing.JLabel();
         jBtnAbrir = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
         jBtnRemover = new javax.swing.JButton();
         jBtnLimpar = new javax.swing.JButton();
         jBtnPlay = new javax.swing.JButton();
@@ -151,8 +158,6 @@ public class jMain extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Hora certa:");
-
         jBtnRemover.setText("Remover musicas...");
         jBtnRemover.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -214,9 +219,7 @@ public class jMain extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jPnlHoras, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBtnOuvirHora)
                         .addGap(140, 140, 140))
@@ -246,10 +249,8 @@ public class jMain extends javax.swing.JFrame {
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPnlHoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBtnOuvirHora))
@@ -316,7 +317,7 @@ public class jMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jChkRepetirUmaActionPerformed
 
     private void jBtnOuvirHoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnOuvirHoraActionPerformed
-        musicas.horaCerta();
+        hora.iniciarThreadHoraAtual();
     }//GEN-LAST:event_jBtnOuvirHoraActionPerformed
 
     /**
@@ -330,7 +331,7 @@ public class jMain extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -366,7 +367,6 @@ public class jMain extends javax.swing.JFrame {
     public static javax.swing.JCheckBox jChkRepetirUma;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     public static javax.swing.JLabel jLblHora;
     public static javax.swing.JLabel jLblMinuto;

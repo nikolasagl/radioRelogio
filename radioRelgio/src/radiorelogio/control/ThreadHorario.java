@@ -17,6 +17,20 @@ import radiorelogio.view.jMain;
  */
 public class ThreadHorario implements Runnable {
 
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                recuperarHoraSistema();
+                if(jMain.jLblMinuto.getText().equals("00"))
+                    jMain.falarHora = true;
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ThreadHorario.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     public void recuperarHoraSistema() {
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH");
@@ -30,17 +44,5 @@ public class ThreadHorario implements Runnable {
         sdf = new SimpleDateFormat("ss");
         String segundo = sdf.format(new Date());
         jMain.jLblSegundos.setText(segundo);
-    }
-    
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                recuperarHoraSistema();
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ThreadHorario.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 }
